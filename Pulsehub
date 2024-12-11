@@ -1,0 +1,108 @@
+-- Initialize your custom library
+local PulseLib = {}
+
+-- Table to store windows and components
+PulseLib.Windows = {}
+
+-- Create the main window
+function PulseLib:MakeWindow(config)
+    local Window = {}
+    local ScreenGui = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+
+    -- Configure ScreenGui
+    ScreenGui.Parent = game:GetService("CoreGui")
+    ScreenGui.Name = config.Name or "PulseLibrary"
+
+    -- Configure MainFrame
+    MainFrame.Parent = ScreenGui
+    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainFrame.Size = UDim2.new(0, 500, 0, 400)
+    MainFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
+    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    MainFrame.BorderSizePixel = 0
+
+    -- Add title bar
+    local TitleBar = Instance.new("TextLabel")
+    TitleBar.Parent = MainFrame
+    TitleBar.Size = UDim2.new(1, 0, 0.1, 0)
+    TitleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    TitleBar.Text = config.Name or "Pulse Library"
+    TitleBar.Font = Enum.Font.GothamBold
+    TitleBar.TextSize = 18
+    TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleBar.BorderSizePixel = 0
+
+    -- Window Functions
+    function Window:MakeTab(tabConfig)
+        local Tab = {}
+        local TabButton = Instance.new("TextButton")
+
+        -- Create tab button
+        TabButton.Parent = MainFrame
+        TabButton.Text = tabConfig.Name or "Tab"
+        TabButton.Font = Enum.Font.Gotham
+        TabButton.TextSize = 14
+        TabButton.Size = UDim2.new(0.25, 0, 0.1, 0)
+        TabButton.Position = UDim2.new(#MainFrame:GetChildren() * 0.25, 0, 0.1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+        -- Section Management
+        function Tab:AddSection(sectionConfig)
+            local Section = {}
+            local SectionFrame = Instance.new("Frame")
+            SectionFrame.Parent = MainFrame
+            SectionFrame.Size = UDim2.new(1, -10, 0.2, 0)
+            SectionFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+            SectionFrame.Position = UDim2.new(0, 5, #MainFrame:GetChildren() * 0.25, 0)
+
+            -- Add Section Title
+            local SectionTitle = Instance.new("TextLabel")
+            SectionTitle.Parent = SectionFrame
+            SectionTitle.Size = UDim2.new(1, 0, 0.2, 0)
+            SectionTitle.BackgroundTransparency = 1
+            SectionTitle.Text = sectionConfig.Name or "Section"
+            SectionTitle.Font = Enum.Font.Gotham
+            SectionTitle.TextSize = 14
+            SectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+            -- Add Section Functions
+            function Section:AddButton(buttonConfig)
+                local Button = Instance.new("TextButton")
+                Button.Parent = SectionFrame
+                Button.Size = UDim2.new(1, 0, 0.3, 0)
+                Button.Text = buttonConfig.Name or "Button"
+                Button.Font = Enum.Font.Gotham
+                Button.TextSize = 14
+                Button.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+                Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+                Button.MouseButton1Click:Connect(function()
+                    if buttonConfig.Callback then
+                        buttonConfig.Callback()
+                    end
+                end)
+            end
+
+            return Section
+        end
+
+        return Tab
+    end
+
+    -- Close/Destroy Function
+    function Window:Destroy()
+        ScreenGui:Destroy()
+    end
+
+    table.insert(PulseLib.Windows, Window)
+    return Window
+end
+
+-- Final Initialization Function
+function PulseLib:Init()
+    print("Pulse Library Initialized")
+end
+
+return PulseLib
